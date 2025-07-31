@@ -55,10 +55,15 @@ pip install -r requirements.txt
 Create a `.env` file in the root directory:
 
 ```env
-DATABASE_URL=postgresql://username:password@localhost:5432/ecommerce
-SECRET_KEY=your_secret_key
+DATABASE_URL=sqlite:///./ecommerce.db
+API_HOST=0.0.0.0
+API_PORT=8000
+DEBUG=True
+SECRET_KEY=your-super-secret-key-change-this-in-production
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
+ALLOWED_ORIGINS=["http://localhost:3000", "http://127.0.0.1:3000"]
+
 ```
 
 ---
