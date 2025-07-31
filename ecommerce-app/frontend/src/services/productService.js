@@ -3,8 +3,25 @@ import api from './api';
 export const productService = {
   // Get all products with filters
   getProducts: async (params = {}) => {
-    const response = await api.get('/products', { params });
-    return response.data;
+    // Filter out empty/null/undefined parameters to prevent 422 errors
+    const cleanParams = {};
+    
+    Object.entries(params).forEach(([key, value]) => {
+      // Only include parameters that have actual values
+      if (value !== null && value !== undefined && value !== '' && value !== 0) {
+        cleanParams[key] = value;
+      }
+    });
+    
+    console.log('API Request - Clean params:', cleanParams); // Debug log
+    
+    try {
+      const response = await api.get('/products', { params: cleanParams });
+      return response.data;
+    } catch (error) {
+      console.error('Product service error:', error);
+      throw error;
+    }
   },
 
   // Get single product
