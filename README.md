@@ -3,6 +3,7 @@
 A full-featured e-commerce platform built with **FastAPI**, **React**, and **PostgreSQL**.
 
 ---
+<img width="1920" height="1080" alt="Screenshot (2)" src="https://github.com/user-attachments/assets/9c3cd42c-ab2b-4fd9-b844-5dde2ef07c6f" />
 
 ## 🚀 Features
 
