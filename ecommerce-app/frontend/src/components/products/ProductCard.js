@@ -1,17 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Star, ShoppingCart, Tag, TrendingUp } from 'lucide-react';
+import { Star, ShoppingCart, Tag, Heart, Package } from 'lucide-react';
+import { useCart } from '../../contexts/CartContext';
+import { useWatchlist } from '../../contexts/WatchlistContext';
+import { formatCurrency, generateStarRating } from '../../utils/helpers';
 
 const Card = styled.div`
   background: white;
   border-radius: 12px;
-  overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
   transition: all 0.3s ease;
   position: relative;
-  cursor: pointer;
-
+  
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
@@ -20,11 +22,7 @@ const Card = styled.div`
 
 const ImageContainer = styled.div`
   position: relative;
-  height: 220px;
-  background: #f8f9fa;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 200px;
   overflow: hidden;
 `;
 
@@ -35,61 +33,84 @@ const ProductImage = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 32px;
   color: #6c757d;
-  font-size: 48px;
 `;
 
-const Badge = styled.div`
+const WatchlistButton = styled.button`
   position: absolute;
-  top: 12px;
-  right: 12px;
-  background: ${props => props.discount > 20 ? '#e53e3e' : '#38a169'};
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
+  top: 10px;
+  right: 10px;
+  background: ${props => props.isInWatchlist ? '#e53e3e' : 'rgba(255, 255, 255, 0.9)'};
+  color: ${props => props.isInWatchlist ? 'white' : '#666'};
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
-  gap: 2px;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover {
+    transform: scale(1.1);
+    background: ${props => props.isInWatchlist ? '#c53030' : 'rgba(255, 255, 255, 1)'};
+  }
 `;
 
 const CardContent = styled.div`
   padding: 1rem;
 `;
 
-const ProductCategory = styled.div`
-  color: #667eea;
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.5rem;
-`;
-
-const ProductName = styled.h3`
-  font-size: 1rem;
+const ProductName = styled(Link)`
+  display: block;
+  font-size: 1.1rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
   color: #2d3748;
+  text-decoration: none;
+  margin-bottom: 0.5rem;
   line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  
+  &:hover {
+    color: #667eea;
+  }
 `;
 
-const ProductBrand = styled.div`
-  color: #666;
-  font-size: 14px;
+const ProductMeta = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+  color: #666;
+`;
+
+const Category = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+`;
+
+const Rating = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+`;
+
+const Stars = styled.div`
+  display: flex;
+`;
+
+const PriceSection = styled.div`
+  margin-bottom: 1rem;
 `;
 
 const PriceContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.25rem;
 `;
 
 const SalePrice = styled.span`
@@ -99,27 +120,18 @@ const SalePrice = styled.span`
 `;
 
 const MarketPrice = styled.span`
-  font-size: 1rem;
+  font-size: 0.875rem;
   color: #999;
   text-decoration: line-through;
 `;
 
-const RatingContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-`;
-
-const StarRating = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 2px;
-`;
-
-const RatingText = styled.span`
-  font-size: 14px;
-  color: #666;
+const Discount = styled.span`
+  background: #48bb78;
+  color: white;
+  padding: 0.125rem 0.375rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
 `;
 
 const CardActions = styled.div`
@@ -129,140 +141,134 @@ const CardActions = styled.div`
 
 const ActionButton = styled.button`
   flex: 1;
-  padding: 10px;
+  padding: 0.75rem 1rem;
   border: none;
   border-radius: 6px;
+  font-weight: 600;
   cursor: pointer;
-  font-weight: 500;
   transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-
+  
   &.primary {
     background: #667eea;
     color: white;
-
+    
     &:hover {
       background: #5a6fd8;
+      transform: translateY(-1px);
+    }
+    
+    &:disabled {
+      background: #a0aec0;
+      cursor: not-allowed;
+      transform: none;
     }
   }
-
+  
   &.secondary {
     background: #f7fafc;
     color: #4a5568;
     border: 1px solid #e2e8f0;
-
+    
     &:hover {
       background: #edf2f7;
+      border-color: #cbd5e0;
     }
   }
 `;
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  color: inherit;
-`;
-
 const ProductCard = ({ product }) => {
-  const {
-    id,
-    product_name,
-    category,
-    brand,
-    sale_price,
-    market_price,
-    rating,
-    discount_percentage,
-    department_name
-  } = product;
-
-  const renderStars = (rating) => {
-    const stars = [];
-    const fullStars = Math.floor(rating || 0);
-    const hasHalfStar = (rating || 0) % 1 >= 0.5;
-
-    for (let i = 0; i < 5; i++) {
-      if (i < fullStars) {
-        stars.push(<Star key={i} size={14} fill="#ffc107" color="#ffc107" />);
-      } else if (i === fullStars && hasHalfStar) {
-        stars.push(<Star key={i} size={14} fill="#ffc107" color="#ffc107" style={{ clipPath: 'inset(0 50% 0 0)' }} />);
-      } else {
-        stars.push(<Star key={i} size={14} color="#e2e8f0" />);
-      }
-    }
-    return stars;
-  };
-
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(price || 0);
-  };
+  const { addToCart, isInCart } = useCart();
+  const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useWatchlist();
 
   const handleAddToCart = (e) => {
     e.preventDefault();
-    e.stopPropagation();
-    // Add to cart logic here
-    console.log('Adding to cart:', product);
+    addToCart(product);
   };
 
+  const handleWatchlistToggle = (e) => {
+    e.preventDefault();
+    if (isInWatchlist(product.id)) {
+      removeFromWatchlist(product.id);
+    } else {
+      addToWatchlist(product);
+    }
+  };
+
+  const stars = generateStarRating(product.rating);
+  const discount = product.market_price && product.sale_price
+    ? Math.round(((product.market_price - product.sale_price) / product.market_price) * 100)
+    : 0;
+
   return (
-    <StyledLink to={`/products/${id}`}>
-      <Card>
-        <ImageContainer>
-          <ProductImage>
-            📦
-          </ProductImage>
-          {discount_percentage > 0 && (
-            <Badge discount={discount_percentage}>
-              <Tag size={12} />
-              {discount_percentage}% OFF
-            </Badge>
-          )}
-        </ImageContainer>
+    <Card>
+      <ImageContainer>
+        <ProductImage>
+          <Package size={32} />
+        </ProductImage>
+        <WatchlistButton 
+          onClick={handleWatchlistToggle}
+          isInWatchlist={isInWatchlist(product.id)}
+          title={isInWatchlist(product.id) ? 'Remove from Watchlist' : 'Add to Watchlist'}
+        >
+          <Heart size={18} fill={isInWatchlist(product.id) ? 'white' : 'none'} />
+        </WatchlistButton>
+      </ImageContainer>
 
-        <CardContent>
-          <ProductCategory>
-            {department_name || category || 'General'}
-          </ProductCategory>
-          
-          <ProductName>{product_name}</ProductName>
-          
-          {brand && (
-            <ProductBrand>{brand}</ProductBrand>
-          )}
+      <CardContent>
+        <ProductName to={`/products/${product.id}`}>
+          {product.product_name}
+        </ProductName>
 
+        <ProductMeta>
+          <Category>
+            <Tag size={14} />
+            {product.category || 'General'}
+          </Category>
+          {product.rating && (
+            <Rating>
+              <Stars>
+                {stars.map((star, index) => (
+                  <Star
+                    key={index}
+                    size={14}
+                    fill={star.type === 'full' ? '#fbbf24' : 'none'}
+                    color="#fbbf24"
+                  />
+                ))}
+              </Stars>
+              <span>({product.rating})</span>
+            </Rating>
+          )}
+        </ProductMeta>
+
+        <PriceSection>
           <PriceContainer>
-            <SalePrice>{formatPrice(sale_price)}</SalePrice>
-            {market_price && market_price > sale_price && (
-              <MarketPrice>{formatPrice(market_price)}</MarketPrice>
+            <SalePrice>{formatCurrency(product.sale_price)}</SalePrice>
+            {product.market_price && product.market_price > product.sale_price && (
+              <>
+                <MarketPrice>{formatCurrency(product.market_price)}</MarketPrice>
+                <Discount>{discount}% OFF</Discount>
+              </>
             )}
           </PriceContainer>
+        </PriceSection>
 
-          {rating && (
-            <RatingContainer>
-              <StarRating>
-                {renderStars(rating)}
-              </StarRating>
-              <RatingText>({rating?.toFixed(1)})</RatingText>
-            </RatingContainer>
-          )}
-
-          <CardActions>
-            <ActionButton 
-              className="primary" 
-              onClick={handleAddToCart}
-            >
-              <ShoppingCart size={16} />
-              Add to Cart
-            </ActionButton>
-          </CardActions>
-        </CardContent>
-      </Card>
-    </StyledLink>
+        <CardActions>
+          <ActionButton 
+            className="primary" 
+            onClick={handleAddToCart}
+            disabled={isInCart(product.id)}
+          >
+            <ShoppingCart size={16} />
+            {isInCart(product.id) ? 'In Cart' : 'Add to Cart'}
+          </ActionButton>
+        </CardActions>
+      </CardContent>
+    </Card>
   );
 };
 

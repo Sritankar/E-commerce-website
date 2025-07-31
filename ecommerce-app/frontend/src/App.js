@@ -7,6 +7,8 @@ import Home from './pages/Home';
 import Products from './pages/Products';
 import ProductDetails from './pages/ProductDetails';
 import { GlobalStyle } from './styles/GlobalStyle';
+import { CartProvider } from './contexts/CartContext';
+import { WatchlistProvider } from './contexts/WatchlistContext';
 
 const AppContainer = styled.div`
   min-height: 100vh;
@@ -21,18 +23,22 @@ const MainContent = styled.main`
 
 function App() {
   return (
-    <AppContainer>
-      <GlobalStyle />
-      <Header />
-      <MainContent>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/products/:id" element={<ProductDetails />} />
-        </Routes>
-      </MainContent>
-      <Footer />
-    </AppContainer>
+    <CartProvider>
+      <WatchlistProvider>
+        <AppContainer>
+          <GlobalStyle />
+          <Header />
+          <MainContent>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/products/:id" element={<ProductDetails />} />
+            </Routes>
+          </MainContent>
+          <Footer />
+        </AppContainer>
+      </WatchlistProvider>
+    </CartProvider>
   );
 }
 
