@@ -1,0 +1,43 @@
+# Database
+*.db
+*.sqlite3
+migrations/versions/
+
+# Environment
+.env
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+logs/
+*.log
+
+# Uploads
+uploads/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node modules (for frontend)
+node_modules/
+build/
+dist/
+
+# OS
+.DS_Store
+Thumbs.db
