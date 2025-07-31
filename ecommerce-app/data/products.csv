@@ -1,0 +1,11 @@
+uniq_id,product_name,category,sub_category,brand,sale_price,market_price,type,rating,description
+LAPTOP001,Gaming Laptop,Electronics,Computers,TechBrand,1299.99,1599.99,Gaming,4.5,High-performance gaming laptop with RTX graphics
+PHONE001,Smartphone,Electronics,Mobile,PhoneBrand,699.99,899.99,Flagship,4.2,Latest smartphone with advanced camera
+BOOK001,Python Programming,Books,Technology,TechPublisher,49.99,59.99,Educational,4.7,Complete guide to Python programming
+SHIRT001,Cotton T-Shirt,Clothing,Men,FashionBrand,19.99,29.99,Casual,4.0,Comfortable cotton t-shirt
+WATCH001,Smart Watch,Electronics,Wearables,TechBrand,299.99,399.99,Smart,4.3,Fitness tracking smartwatch
+COFFEE001,Coffee Maker,Home,Kitchen,HomeBrand,89.99,119.99,Appliance,4.1,Automatic drip coffee maker
+SHOES001,Running Shoes,Clothing,Footwear,SportsBrand,129.99,159.99,Athletic,4.6,Professional running shoes
+TABLET001,Android Tablet,Electronics,Computers,TechBrand,399.99,499.99,Entertainment,4.4,10-inch Android tablet
+HEADPHONES001,Wireless Headphones,Electronics,Audio,AudioBrand,199.99,249.99,Wireless,4.5,Noise-cancelling wireless headphones
+CAMERA001,Digital Camera,Electronics,Photography,CameraBrand,799.99,999.99,Professional,4.8,Professional DSLR camera
