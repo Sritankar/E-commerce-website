@@ -9,6 +9,19 @@ export const useProducts = (params = {}) => {
     {
       keepPreviousData: true,
       staleTime: 2 * 60 * 1000, // 2 minutes
+      retry: (failureCount, error) => {
+        // Don't retry on 4xx errors
+        if (error?.response?.status >= 400 && error?.response?.status < 500) {
+          return false;
+        }
+        return failureCount < 3;
+      },
+      onError: (error) => {
+        console.error('Products query error:', error);
+        if (error?.response?.status === 422) {
+          console.error('Validation error details:', error.response.data);
+        }
+      }
     }
   );
 };
@@ -19,6 +32,12 @@ export const useProduct = (id) => {
     () => productService.getProduct(id),
     {
       enabled: !!id,
+      retry: (failureCount, error) => {
+        if (error?.response?.status === 404) {
+          return false;
+        }
+        return failureCount < 3;
+      }
     }
   );
 };
@@ -49,58 +68,6 @@ export const useProductStats = () => {
     productService.getProductStats,
     {
       staleTime: 5 * 60 * 1000, // 5 minutes
-    }
-  );
-};
-
-export const useCreateProduct = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation(
-    productService.createProduct,
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries('products');
-        toast.success('Product created successfully!');
-      },
-      onError: (error) => {
-        toast.error(error.response?.data?.detail || 'Failed to create product');
-      },
-    }
-  );
-};
-
-export const useUpdateProduct = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation(
-    ({ id, data }) => productService.updateProduct(id, data),
-    {
-      onSuccess: (data, variables) => {
-        queryClient.invalidateQueries(['product', variables.id]);
-        queryClient.invalidateQueries('products');
-        toast.success('Product updated successfully!');
-      },
-      onError: (error) => {
-        toast.error(error.response?.data?.detail || 'Failed to update product');
-      },
-    }
-  );
-};
-
-export const useDeleteProduct = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation(
-    productService.deleteProduct,
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries('products');
-        toast.success('Product deleted successfully!');
-      },
-      onError: (error) => {
-        toast.error(error.response?.data?.detail || 'Failed to delete product');
-      },
     }
   );
 };
