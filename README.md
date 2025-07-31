@@ -124,8 +124,8 @@ Use Uvicorn, Gunicorn, or Nginx for backend. Use PostgreSQL in production.
 ## 👨‍💻 Author
 
 **Your Name**  
-GitHub: [@yourusername](https://github.com/yourusername)  
-Email: you@example.com
+GitHub: [@yourusername](https://github.com/sritankar)  
+Email: sritankar3239@gmail.com
 
 ---
 
