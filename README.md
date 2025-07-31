@@ -33,7 +33,7 @@ A full-featured e-commerce platform built with **FastAPI**, **React**, and **Pos
 ### 🔁 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/ecommerce-app.git
+https://github.com/Sritankar/E-commerce-website.git
 cd ecommerce-app
 ```
 
@@ -124,7 +124,7 @@ Use Uvicorn, Gunicorn, or Nginx for backend. Use PostgreSQL in production.
 ## 👨‍💻 Author
 
 **Your Name**  
-GitHub: [@yourusername](https://github.com/sritankar)  
+GitHub: [sritankar](https://github.com/sritankar)  
 Email: sritankar3239@gmail.com
 
 ---
